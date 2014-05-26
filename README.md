@@ -31,14 +31,14 @@ example:
       ports:
         - "5432"
 
-Base systax is equivalent [fig.yml](http://orchardup.github.io/fig/yml.html), but `image' and `build` must not spcify.  
-You should assign just one Servire named `main`.
+Base systax is equivalent [fig.yml](http://orchardup.github.io/fig/yml.html), but `image` and `build` must not spcify.  
+You should assign just one Service named `main`.
 
 Environment variables are avilable for linked containers.  
 It is able to use same as [fig's](http://orchardup.github.io/fig/env.html).  
 For above example, you can use `$DB_1_PORT` in your app's database config.
 
-At last, Add this line your Dockerfile.
+At last, add this line your Dockerfile.
 
     ADD ./karakuri.yml /karakuri.yml
 
