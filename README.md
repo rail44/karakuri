@@ -18,7 +18,7 @@ or
 
 ## Config
 
-Create `karakuri.yml' for your product.
+Create `karakuri.yml` for your product.
 
 example:
 
@@ -46,5 +46,7 @@ At last, add this line your Dockerfile.
 
     docker build -t <image_name> .
     karakuri <image_name>
+
+If `$DOCKER_HOST` is defined, **Karakuri** will set it for Docker daemon.
 
 **Karakuri** is going to support management of building image.
