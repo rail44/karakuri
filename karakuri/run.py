@@ -1,3 +1,4 @@
+import sys
 import argparse
 from .project import Project
 
@@ -6,4 +7,5 @@ def main():
     parser.add_argument('image_name', metavar='image', type=str, help='a name of image')
     args = parser.parse_args()
 
-    Project(args.image_name).up()
+    code = Project(args.image_name).up()
+    sys.exit(code)

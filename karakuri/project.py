@@ -19,12 +19,16 @@ class Project:
 
     def up(self):
         self.create_main_container()
-        service = FigProject.from_config(self.name, self.get_config(), self.client).get_service('main')
-        service.recreate_containers()
-        service.start()
-        for chunk in self.client.logs(self.main_container_name, stream=True):
-            sys.stdout.write(chunk)
-        service.remove_stopped()
+        project = FigProject.from_config(self.name, self.get_config(), self.client)
+        for container in project.up():
+            if container.name == self.main_container_name:
+                for chunk in container.logs(stream=True):
+                    sys.stdout.write(chunk)
+                inspect = self.client.inspect_container(container.id)
+                code = inspect['State']['ExitCode']
+                break
+        project.remove_stopped()
+        return code
 
     def create_main_container(self):
         self.client.create_container(self.image_name, name=self.main_container_name)
