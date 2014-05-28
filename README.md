@@ -23,7 +23,10 @@ Create `karakuri.yml` for your product.
 example:
 
     main:
-      command: bundle exec rspec
+      tasks:
+        start: bundle exec rake start
+        test: bundle exec rspec
+      default: start
       links:
         - db
     db:
@@ -31,8 +34,8 @@ example:
       ports:
         - "5432"
 
-Base systax is equivalent [fig.yml](http://orchardup.github.io/fig/yml.html), but `image` and `build` must not spcify.  
-You should assign just one Service named `main`.
+Base systax is equivalent [fig.yml](http://orchardup.github.io/fig/yml.html).
+You should assign just one Service named `main`. it must not have `image` and `build`.  
 
 Environment variables are avilable for linked containers.  
 It is able to use same as [fig's](http://orchardup.github.io/fig/env.html).  
