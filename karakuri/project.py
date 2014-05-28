@@ -17,9 +17,19 @@ class Project:
             timeout=10
         )
 
-    def up(self):
+    def up(self, task):
         self.create_main_container()
-        project = FigProject.from_config(self.name, self.get_config(), self.client)
+        config = self.get_config()
+        if not config['main'].has_key('default'):
+            raise RuntimeError
+        default = config['main'].pop('default', '')
+        tasks = config['main'].pop('tasks', [])
+        if task == '':
+            task = default
+        for t in tasks:
+            if t == task:
+                config['main']['command'] = tasks[t]
+        project = FigProject.from_config(self.name, config, self.client)
         for container in project.up():
             if container.name == self.main_container_name:
                 for chunk in container.logs(stream=True):
