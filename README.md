@@ -22,34 +22,39 @@ Create `karakuri.yml` for your product.
 
 example:
 
-    main:
-      tasks:
-        start: bundle exec rake start
-        test: bundle exec rspec
-      default: start
-      links:
-        - db
-    db:
-      image: orchardup/postgresql
-      ports:
-        - "5432"
+    tasks:
+      start: bundle exec rake start
+      test: bundle exec rspec
+    default: start
+    links:
+      - db
+      - cache
+    services:
+      db:
+        image: orchardup/postgresql
+        ports:
+          - "5432"
+      cache:
+        image: tutum/memcached
+        ports:
+          - "11211"
+        
 
 Base systax is equivalent [fig.yml](http://orchardup.github.io/fig/yml.html).
-You should assign just one Service named `main`. it must not have `image` and `build`.  
 
 Environment variables are avilable for linked containers.  
 It is able to use same as [fig's](http://orchardup.github.io/fig/env.html).  
 For above example, you can use `$DB_1_PORT` in your app's database config.
 
-At last, add this line your Dockerfile.
-
-    ADD ./karakuri.yml /karakuri.yml
+**Karakuri** will detect `karakuri.yml` form root(`/`) or `WORKDIR`.  
+You must add it to either.
 
 ## Usage
 
     docker build -t <image_name> .
-    karakuri <image_name>
+    karakuri <image_name> <command>
 
-If `$DOCKER_HOST` is defined, **Karakuri** will set it for Docker daemon.
+If `$DOCKER_HOST` is defined, **Karakuri** will set it for Docker daemon.  
+For example, you can be able to run test with
 
-**Karakuri** is going to support management of building image.
+    karakuri <image_name> do test
