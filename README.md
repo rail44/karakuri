@@ -43,10 +43,10 @@ example:
 Base systax is equivalent [fig.yml](http://orchardup.github.io/fig/yml.html).
 
 Environment variables are avilable for linked containers.  
-It is able to use same as [fig's](http://orchardup.github.io/fig/env.html).  
+It is able to be used same as [fig's](http://orchardup.github.io/fig/env.html).  
 For above example, you can use `$DB_1_PORT` in your app's database config.
 
-**Karakuri** will detect `karakuri.yml` form root(`/`) or `WORKDIR`.  
+**Karakuri** will try to find `karakuri.yml` from root(`/`) or `WORKDIR`.  
 You must add it to either.
 
 ## Usage
