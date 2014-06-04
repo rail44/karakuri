@@ -13,7 +13,7 @@ class Project:
         self.name = str(uuid4()).replace('-', '')
         self.image_name = image_name
         self.client = docker.Client(
-            base_url=os.getenv('DOCKER_1_PORT', 'unix://var/run/docker.sock'),
+            base_url=os.getenv('DOCKER_HOST', 'unix://var/run/docker.sock'),
             version='1.9',
             timeout=10
         )
@@ -38,18 +38,18 @@ class Project:
         default = config.get('default', '')
         self.main_container.remove()
         tasks = config['tasks']
-        tasks['{}(default)'.format(default)] = tasks.pop(default)
+        tasks['{0}(default)'.format(default)] = tasks.pop(default)
         return tasks
 
     def create_main_container(self):
-        self.main_container = Container.create(self.client, image=self.image_name, name='{}_main_1'.format(self.name))
+        self.main_container = Container.create(self.client, image=self.image_name, name='{0}_main_1'.format(self.name))
 
     def get_config(self):
         try:
             config_list = self.client.copy(self.main_container.name, '/karakuri.yml').read(list).split('\0')
         except APIError:
             work_dir = self.main_container.inspect()['Config']['WorkingDir']
-            config_list = self.client.copy(self.main_container.name, '{}/karakuri.yml'.format(work_dir)).read(list).split('\0')
+            config_list = self.client.copy(self.main_container.name, '{0}/karakuri.yml'.format(work_dir)).read(list).split('\0')
 
         config_list = filter(None, config_list)
         return yaml.load(config_list[-1])
