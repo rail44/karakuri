@@ -1,6 +1,7 @@
 import os
 import sys
 import yaml
+import tarfile
 
 from uuid import uuid4
 from fig.project import Project as FigProject
@@ -46,13 +47,12 @@ class Project:
 
     def get_config(self):
         try:
-            config_list = self.client.copy(self.main_container.name, '/karakuri.yml').read(list).split('\0')
+            io = self.client.copy(self.main_container.name, '/karakuri.yml')
         except APIError:
             work_dir = self.main_container.inspect()['Config']['WorkingDir']
-            config_list = self.client.copy(self.main_container.name, '{0}/karakuri.yml'.format(work_dir)).read(list).split('\0')
-
-        config_list = filter(None, config_list)
-        return yaml.load(config_list[-1])
+            io = self.client.copy(self.main_container.name, '{0}/karakuri.yml'.format(work_dir))
+        tar = tarfile.open(mode='r|', fileobj=io)
+        return yaml.load(tar.extractfile('karakuri.yml'))
 
     def get_fig_config(self, task):
         config = self.get_config()
