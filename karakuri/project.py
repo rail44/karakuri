@@ -30,6 +30,7 @@ class Project:
                 inspect = container.inspect()
                 code = inspect['State']['ExitCode']
                 break
+        project.stop()
         return code
 
     def rm(self):
