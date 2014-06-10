@@ -41,7 +41,10 @@ class Project:
         config = self.get_config()
         default = config.get('default', '')
         tasks = config['tasks']
-        tasks['{0}(default)'.format(default)] = tasks.pop(default)
+        try:
+            tasks['{0}(default)'.format(default)] = tasks.pop(default)
+        except KeyError:
+            pass
         return tasks
 
     def get_config(self):
