@@ -30,13 +30,14 @@ class Project:
                 inspect = container.inspect()
                 code = inspect['State']['ExitCode']
                 break
-        project.stop()
+        config.pop('main', None)
+        project.stop(service_names=config.keys())
         return code
 
     def rm(self):
         config = self.get_fig_config('')
         project = FigProject.from_config(self.image_name, config, self.client)
-        project.remove_stopped()
+        project.remove_stopped(v=True)
 
     def tasks(self):
         config = self.get_config()
