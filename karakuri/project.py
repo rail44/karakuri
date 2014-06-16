@@ -31,7 +31,8 @@ class Project:
                 code = inspect['State']['ExitCode']
                 break
         config.pop('main', None)
-        project.stop(service_names=config.keys())
+        if config:
+            project.stop(service_names=config.keys())
         return code
 
     def rm(self):
