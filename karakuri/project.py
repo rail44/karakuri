@@ -20,8 +20,10 @@ class Project:
         inspect = self.client.inspect_image(image_name)
         self.image_name = inspect['id']
 
-    def do(self, task):
+    def do(self, task, args):
         config = self.get_fig_config(task)
+        if args:
+            config['main']['command'] += ' {0}'.format(' '.join(args))
         project = FigProject.from_config(self.image_name, config, self.client)
         for container in project.up():
             if container.name == '{0}_main_1'.format(self.image_name):

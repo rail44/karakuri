@@ -10,6 +10,7 @@ def main():
 
     do_parser = sub_parsers.add_parser('do', help='exec task')
     do_parser.add_argument('task', metavar='task', type=str, nargs='?', default='', help='a task to exec')
+    do_parser.add_argument('args', metavar='args', type=str, nargs='*', default='', help='args will be passed to task command')
     do_parser.set_defaults(func=do)
 
     do_parser = sub_parsers.add_parser('rm', help='remove stopped containers')
@@ -22,7 +23,7 @@ def main():
     args.func(args)
 
 def do(args):
-    code = Project(args.image_name).do(args.task)
+    code = Project(args.image_name).do(args.task, args.args)
     sys.exit(code)
 
 def rm(args):
