@@ -53,7 +53,7 @@ class Project:
         return tasks
 
     def get_config(self):
-        tmp_container = Container.create(self.client, image=self.image_name, name=str(uuid4()).replace('-', ''))
+        tmp_container = Container.create(self.client, image=self.image_name, name=str(uuid4()).replace('-', ''), command='true')
         try:
             res = self.client.copy(tmp_container.name, '/karakuri.yml')
         except APIError:
