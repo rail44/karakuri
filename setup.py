@@ -10,7 +10,7 @@ reqs = [str(ir.req) for ir in install_reqs]
 
 setup(
     name = 'karakuri',
-    version = '0.2.4',
+    version = '0.2.5',
     author = 'Satoshi Amemiya',
     author_email = 'satoshi_amemiya@voyagegroup.com',
     description = 'Task management tool for docker image',

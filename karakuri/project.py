@@ -2,8 +2,10 @@ import os
 import sys
 import yaml
 import tarfile
+import re
 from io import BytesIO
 from uuid import uuid4
+from string import Template
 
 from fig.project import Project as FigProject
 from fig.container import Container
@@ -15,8 +17,9 @@ class Project:
         self.client = docker.Client(
             base_url=os.getenv('DOCKER_HOST', 'unix://var/run/docker.sock'),
             version='1.9',
-            timeout=10
         )
+        m = re.search(':(.*)', image_name)
+        self.tag = m.group(1) if m else 'latest'
         inspect = self.client.inspect_image(image_name)
         self.image_name = inspect['id']
 
@@ -64,7 +67,9 @@ class Project:
         io.write(res.data)
         io.seek(0)
         tar = tarfile.open(mode='r:', fileobj=io)
-        return yaml.load(tar.extractfile('karakuri.yml'))
+        config_str = tar.extractfile('karakuri.yml').read()
+        config_str = Template(config_str).substitute(TAG=self.tag)
+        return yaml.load(config_str)
 
     def get_fig_config(self, task):
         config = self.get_config()
