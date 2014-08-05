@@ -16,12 +16,12 @@ class Project:
     def __init__(self, image_name):
         self.client = docker.Client(
             base_url=os.getenv('DOCKER_HOST', 'unix://var/run/docker.sock'),
-            version='1.9',
+            version='1.12'
         )
         m = re.search(':(.*)', image_name)
         self.tag = m.group(1) if m else 'latest'
         inspect = self.client.inspect_image(image_name)
-        self.image_name = inspect['id']
+        self.image_name = inspect['Id']
 
     def do(self, task, args):
         config = self.get_fig_config(task)
@@ -30,7 +30,7 @@ class Project:
         project = FigProject.from_config(self.image_name, config, self.client)
         for container in project.up():
             if container.name == '{0}_main_1'.format(self.image_name):
-                for chunk in container.logs(stream=True):
+                for chunk in container.attach(stderr=True, stdout=True, stream=True):
                     sys.stdout.write(chunk)
                 inspect = container.inspect()
                 code = inspect['State']['ExitCode']
@@ -56,7 +56,7 @@ class Project:
         return tasks
 
     def get_config(self):
-        tmp_container = Container.create(self.client, image=self.image_name, name=str(uuid4()).replace('-', ''), command='true')
+        tmp_container = Container.create(self.client, image=self.image_name, command='true')
         try:
             res = self.client.copy(tmp_container.name, '/karakuri.yml')
         except APIError:
